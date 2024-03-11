@@ -9,7 +9,7 @@ Recently, decoder-only pre-trained large language models (LLMs), with several te
 
 ## Results
 
-F1 scores of fully-labeled RST trees for RST-DT, Instr-DT, and the GUM corpus.
+F1 scores of fully-labeled spans for RST-DT, Instr-DT, and the GUM corpus.
 
 | Strategy      | Method           | Model             |   RST-DT | Instr-DT |      GUM |
 | :------------ | :--------------- | :---------------- | -------: | -------: | -------: |
