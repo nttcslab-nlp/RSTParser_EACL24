@@ -2,7 +2,7 @@
 
 Implementation of "Can we obtain significant success in RST discourse parsing by using Large Language Models?" accepted in the main conference of EACL 2024. Our main parser, which fine-tuned Llama 2 (70B) with QLoRA based on the prompts, significantly outperformed current state-of-the-art parsers for three benchmark datasets, RST-DT, Instr-DT, and the GUM corpus.
 
-**Paper**: [[arXiv]](https://arxiv.org/abs/2403.05065), [EACL 2024]
+**Paper**: [[arXiv]](https://arxiv.org/abs/2403.05065), [[EACL 2024]](https://aclanthology.org/2024.eacl-long.171/)
 
 **Abstract**:
 Recently, decoder-only pre-trained large language models (LLMs), with several tens of billion parameters, have significantly impacted a wide range of natural language processing (NLP) tasks. While encoder-only or encoder-decoder pre-trained language models have already proved to be effective in discourse parsing, the extent to which LLMs can perform this task remains an open research question. Therefore, this paper explores how beneficial such LLMs are for Rhetorical Structure Theory (RST) discourse parsing. Here, the parsing process for both fundamental top-down and bottom-up strategies is converted into prompts, which LLMs can work with. We employ Llama 2 and fine-tune it with QLoRA, which has fewer parameters that can be tuned. Experimental results on three benchmark datasets, RST-DT, Instr-DT, and the GUM corpus, demonstrate that Llama 2 with 70 billion parameters in the bottom-up strategy obtained state-of-the-art (SOTA) results with significant differences. Furthermore, our parsers demonstrated generalizability when evaluated on RST-DT, showing that, in spite of being trained with the GUM corpus, it obtained similar performances to those of existing parsers trained with RST-DT.
