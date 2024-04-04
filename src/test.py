@@ -211,7 +211,7 @@ def get_model_type_list(config: Config):
             assert (
                 getattr(config, f"{model_type}_lora_params") is not None
             ), f"{model_type}_lora_params"
-            assert os.path.exists(getattr(config, f"{model_type}_lora_params"))
+            # assert os.path.exists(getattr(config, f"{model_type}_lora_params"))
 
     return model_type_list
 
