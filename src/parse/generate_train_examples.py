@@ -16,13 +16,7 @@ def generate_train_examples(
     Generate training examples for corpus.
     """
 
-    data_types = ["span", "nuc", "rel", "rel-with-nuc"]
-    # data_types = data_types + [f"{subtask}_with_tree" for subtask in data_types]
-    # data_types = (
-    #     data_types
-    #     + [f"{subtask}_prune_nuc" for subtask in data_types]
-    #     + [f"{subtask}_prune_edge" for subtask in data_types]
-    data_types += ["top_down"]
+    data_types = ["span", "nuc", "rel", "rel-with-nuc", "top_down"]
 
     return_dict = {key: [] for key in data_types}
     for doc in tqdm(dataset):
@@ -76,23 +70,8 @@ def doc2examples(
 
     assert (
         len(return_dict["nuc"])
-        # == len(return_dict["nuc_prune_nuc"])
-        # == len(return_dict["nuc_prune_edge"])
-        # == len(return_dict["nuc_with_tree"])
-        # == len(return_dict["nuc_with_tree_prune_nuc"])
-        # == len(return_dict["nuc_with_tree_prune_edge"])
         == len(return_dict["rel"])
-        # == len(return_dict["rel_prune_nuc"])
-        # == len(return_dict["rel_prune_edge"])
-        # == len(return_dict["rel_with_tree"])
-        # == len(return_dict["rel_with_tree_prune_nuc"])
-        # == len(return_dict["rel_with_tree_prune_edge"])
         == len(return_dict["rel-with-nuc"])
-        # == len(return_dict["rel-with-nuc_prune_nuc"])
-        # == len(return_dict["rel-with-nuc_prune_edge"])
-        # == len(return_dict["rel-with-nuc_with_tree"])
-        # == len(return_dict["rel-with-nuc_with_tree_prune_nuc"])
-        # == len(return_dict["rel-with-nuc_with_tree_prune_edge"])
     )
 
     # top-down
@@ -156,13 +135,6 @@ def generate_shift_reduce_examples(
     corpus: Literal["rstdt", "instrdt", "gum"] = "rstdt",
 ) -> dict[str, dict]:
     data_type = ["span", "nuc", "rel", "rel-with-nuc"]
-    data_type = data_type + [f"{subtask}_with_tree" for subtask in data_type]
-
-    data_type = (
-        data_type
-        + [f"{subtask}_prune_nuc" for subtask in data_type]
-        + [f"{subtask}_prune_edge" for subtask in data_type]
-    )
 
     examples = {k: [] for k in data_type}
 
@@ -189,23 +161,14 @@ def generate_shift_reduce_examples(
                 assert node_stack[-2].leaves() == [str(idx) for idx in range(*s2)]
                 assert q1[1] == q1[0] + 1
 
-                for span_type in ["text", "tree"]:
-                    for prune_type in ["none", "nuc", "edge"]:
-                        span_example = generate_span_example(
-                            stack1=node_stack[-1],
-                            stack2=node_stack[-2],
-                            queue1=q1[0],
-                            action=act,
-                            edus=edus,
-                            span_type=span_type,
-                            prune_type=prune_type,
-                        )
-                        key = (
-                            "span" if span_type == "text" else f"span_with_{span_type}"
-                        )
-                        if prune_type != "none":
-                            key += f"_prune_{prune_type}"
-                        examples[key].append(span_example)
+                span_example = generate_span_example(
+                    stack1=node_stack[-1],
+                    stack2=node_stack[-2],
+                    queue1=q1[0],
+                    action=act,
+                    edus=edus,
+                )
+                examples["span"].append(span_example)
 
             node_stack.append(node)
 
@@ -225,66 +188,27 @@ def generate_shift_reduce_examples(
             assert s2_node.leaves() == [str(idx) for idx in range(*s2)]
 
             # add label example
-            for span_type in ["text", "tree"]:
-                key_suffix_span = "" if span_type == "text" else f"_with_{span_type}"
-                for prune_type in ["none", "nuc", "edge"]:
-                    key_suffix = key_suffix_span
-                    if prune_type != "none":
-                        key_suffix += f"_prune_{prune_type}"
 
-                    nuc_example = generate_nuc_example(
-                        s1_node,
-                        s2_node,
-                        edus,
-                        nuc,
-                        span_type=span_type,
-                        prune_type=prune_type,
-                    )
-                    examples[f"nuc{key_suffix}"].append(nuc_example)
+            nuc_example = generate_nuc_example(s1_node, s2_node, edus, nuc)
+            examples["nuc"].append(nuc_example)
 
-                    rel_example = generate_rel_example(
-                        s1_node,
-                        s2_node,
-                        edus,
-                        rel,
-                        span_type=span_type,
-                        prune_type=prune_type,
-                        corpus=corpus,
-                    )
-                    examples[f"rel{key_suffix}"].append(rel_example)
+            rel_example = generate_rel_example(
+                s1_node, s2_node, edus, rel, corpus=corpus
+            )
+            examples["rel"].append(rel_example)
 
-                    rel_with_nuc_example = generate_rel_with_nuc_example(
-                        s1_node,
-                        s2_node,
-                        edus,
-                        nuc,
-                        rel,
-                        span_type=span_type,
-                        prune_type=prune_type,
-                        corpus=corpus,
-                    )
-                    examples[f"rel-with-nuc{key_suffix}"].append(rel_with_nuc_example)
+            rel_with_nuc_example = generate_rel_with_nuc_example(
+                s1_node, s2_node, edus, nuc, rel, corpus=corpus
+            )
+            examples["rel-with-nuc"].append(rel_with_nuc_example)
 
             if len(state.allowed_actions()) == 2:
                 assert q1[1] == q1[0] + 1
                 # add span example
-                for span_type in ["text", "tree"]:
-                    for prune_type in ["none", "nuc", "edge"]:
-                        span_example = generate_span_example(
-                            stack1=s1_node,
-                            stack2=s2_node,
-                            queue1=q1[0],
-                            action=act,
-                            edus=edus,
-                            span_type=span_type,
-                            prune_type=prune_type,
-                        )
-                        key = (
-                            "span" if span_type == "text" else f"span_with_{span_type}"
-                        )
-                        if prune_type != "none":
-                            key += f"_prune_{prune_type}"
-                        examples[key].append(span_example)
+                span_example = generate_span_example(
+                    stack1=s1_node, stack2=s2_node, queue1=q1[0], action=act, edus=edus
+                )
+                examples["span"].append(span_example)
         else:
             raise ValueError("Input tree is not binarized.")
 
@@ -293,69 +217,12 @@ def generate_shift_reduce_examples(
     return examples
 
 
-def prune_tree(node: AttachTree, prune_type: Literal["nuc", "edge"]) -> AttachTree:
-    if prune_type == "nuc":
-        """
-        Prune satellite node.
-        """
-        if not isinstance(node, AttachTree) or node.label() == "text":
-            return node
-        nuc = node.label().split(":", maxsplit=1)[0]
-
-        if nuc == "nucleus-nucleus":
-            return AttachTree(
-                node.label(),
-                [prune_tree(node[0], prune_type), prune_tree(node[1], prune_type)],
-            )
-        elif nuc == "nucleus-satellite":
-            return prune_tree(node[0], prune_type)
-        elif nuc == "satellite-nucleus":
-            return prune_tree(node[1], prune_type)
-        else:
-            raise ValueError(f"Invalid nucleus label: {nuc}")
-
-    elif prune_type == "edge":
-        """
-        Use only edge edus.
-        """
-        if len(node.leaves()) == 1:
-            assert node.label() == "text"
-            return node
-
-        return AttachTree(
-            node.label(),
-            [
-                AttachTree("text", [node.leaves()[0]]),
-                AttachTree("text", [node.leaves()[-1]]),
-            ],
-        )
-
-    else:
-        raise ValueError(f"Invalid prune_type: {prune_type}")
-
-
-def node2text(
-    node: AttachTree,
-    edus: list[str],
-    return_type: Literal["text", "tree"] = "text",
-    prune_type: Literal["none", "nuc", "edge"] = "none",
-) -> str:
+def node2text(node: AttachTree, edus: list[str]) -> str:
     """
     Convert a single node to text
     """
 
-    if prune_type != "none":
-        node = prune_tree(node, prune_type=prune_type)
-
-    if return_type == "text":
-        return " ".join([edus[int(leaf_idx)].strip() for leaf_idx in node.leaves()])
-    elif return_type == "tree":
-        text = node._pformat_flat(nodesep="", parens="[]", quotes=False)
-        for leaf_idx in node.leaves():
-            text = text.replace(f"text {leaf_idx}", edus[int(leaf_idx)].strip())
-        return text
-    else:
-        raise ValueError(f"Invalid return_type: {return_type}")
+    return " ".join([edus[int(leaf_idx)].strip() for leaf_idx in node.leaves()])
 
 
 def generate_span_example(
@@ -364,15 +231,13 @@ def generate_span_example(
     queue1: int | str,
     action: str,
     edus: list[str],
-    span_type: Literal["text", "tree"] = "text",
-    prune_type: Literal["none", "nuc", "edge"] = "none",
 ) -> dict[str, str]:
     """
     Generate span example.
     """
 
-    stack2_text = node2text(stack2, edus, return_type=span_type, prune_type=prune_type)
-    stack1_text = node2text(stack1, edus, return_type=span_type, prune_type=prune_type)
+    stack2_text = node2text(stack2, edus)
+    stack1_text = node2text(stack1, edus)
     queue1_text = edus[int(queue1)].strip()
 
     input_lines = [
@@ -392,12 +257,10 @@ def generate_nuc_example(
     stack2: AttachTree,
     edus: list[str],
     nuc: Literal["nucleus-nucleus", "nucleus-satellite", "satellite-nucleus", "<pad>"],
-    span_type: Literal["text", "tree"] = "text",
-    prune_type: Literal["none", "nuc", "edge"] = "none",
 ) -> dict[str, str]:
     """Generate train example to predict nucleus label."""
-    span2_text = node2text(stack2, edus, return_type=span_type, prune_type=prune_type)
-    span1_text = node2text(stack1, edus, return_type=span_type, prune_type=prune_type)
+    span2_text = node2text(stack2, edus)
+    span1_text = node2text(stack1, edus)
 
     input_lines = [
         f"Span1: {span2_text}",
@@ -415,16 +278,14 @@ def generate_rel_example(
     stack2: AttachTree,
     edus: list[str],
     rel: str,
-    span_type: Literal["text", "tree"] = "text",
-    prune_type: Literal["none", "nuc", "edge"] = "none",
     corpus: Literal["rstdt", "instrdt", "gum"] = "rstdt",
 ) -> dict[str, str]:
     """
     Generate train example to predict relation label.
     """
 
-    span2_text = node2text(stack2, edus, return_type=span_type, prune_type=prune_type)
-    span1_text = node2text(stack1, edus, return_type=span_type, prune_type=prune_type)
+    span2_text = node2text(stack2, edus)
+    span1_text = node2text(stack1, edus)
 
     rel_labels = get_relation_labels(corpus)
 
@@ -442,21 +303,14 @@ def generate_rel_example(
 
 
 def generate_rel_with_nuc_example(
-    stack1,
-    stack2,
-    edus,
-    nuc,
-    rel,
-    span_type: Literal["text", "tree"] = "text",
-    prune_type: Literal["none", "nuc", "edge"] = "none",
-    corpus: Literal["rstdt", "instrdt", "gum"] = "rstdt",
+    stack1, stack2, edus, nuc, rel, corpus: Literal["rstdt", "instrdt", "gum"] = "rstdt"
 ) -> dict[str, str]:
     """
     Generate train example to predict relation label.
     """
 
-    span2_text = node2text(stack2, edus, return_type=span_type, prune_type=prune_type)
-    span1_text = node2text(stack1, edus, return_type=span_type, prune_type=prune_type)
+    span2_text = node2text(stack2, edus)
+    span1_text = node2text(stack1, edus)
 
     rel_labels = get_relation_labels(corpus=corpus)
     input_lines = [

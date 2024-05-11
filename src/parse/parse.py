@@ -17,8 +17,6 @@ def parse_dataset(
     tokenizer: PreTrainedTokenizer,
     parse_type: Literal["bottom_up", "top_down"] = "bottom_up",
     rel_type: Literal["rel", "nuc_rel", "rel_with_nuc"] = "rel",
-    with_tree: bool = False,
-    prune_type: Literal["none", "nuc", "edge"] = "none",
     corpus: Literal["rstdt", "instrdt", "gum"] = "rstdt",
 ) -> list[dict]:
     results = {"doc_id": [], "gold_tree": [], "pred_tree": []}
@@ -33,8 +31,6 @@ def parse_dataset(
             tokenizer,
             parse_type=parse_type,
             rel_type=rel_type,
-            with_tree=with_tree,
-            prune_type=prune_type,
             corpus=corpus,
         )
         results["doc_id"].append(doc["doc_id"])
@@ -50,8 +46,6 @@ def parse_doc(
     tokenizer: PreTrainedTokenizer,
     parse_type: Literal["bottom_up", "top_down"] = "bottom_up",
     rel_type: Literal["rel", "nuc_rel", "rel_with_nuc"] = "rel",
-    with_tree: bool = False,
-    prune_type: Literal["none", "nuc", "edge"] = "none",
     corpus: Literal["rstdt", "instrdt", "gum"] = "rstdt",
 ) -> AttachTree:
     """Parse document with models
@@ -66,13 +60,7 @@ def parse_doc(
 
     if parse_type == "bottom_up":
         tree = build_tree_by_shift_reduce(
-            edus,
-            model,
-            tokenizer,
-            rel_type=rel_type,
-            with_tree=with_tree,
-            prune_type=prune_type,
-            corpus=corpus,
+            edus, model, tokenizer, rel_type=rel_type, corpus=corpus
         )
     elif parse_type == "top_down":
         tree = build_tree_by_top_down(

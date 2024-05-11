@@ -28,18 +28,6 @@ class Config(Tap):
     nuc_rel_lora_params: str | None = None
     rel_with_nuc_lora_params: str | None = None
 
-    span_prune_nuc_lora_params: str | None = None
-    nuc_prune_nuc_lora_params: str | None = None
-    rel_prune_nuc_lora_params: str | None = None
-    nuc_rel_prune_nuc_lora_params: str | None = None
-    rel_with_nuc_prune_nuc_lora_params: str | None = None
-
-    span_with_tree_lora_params: str | None = None
-    nuc_with_tree_lora_params: str | None = None
-    rel_with_tree_lora_params: str | None = None
-    nuc_rel_with_tree_lora_params: str | None = None
-    rel_with_nuc_with_tree_lora_params: str | None = None
-
     top_down_lora_params: str | None = None
 
     zero_shot: bool = False
@@ -56,8 +44,6 @@ class Config(Tap):
 
     parse_type: str = "bottom_up"  # bottom_up or top_down
     rel_type: str = "rel"  # rel or nuc_rel or rel_with_nuc
-    with_tree: bool = False
-    prune_type: str = "none"  # none, nuc or edge
 
     skip_valid: bool = False
 
@@ -199,12 +185,6 @@ def get_model_type_list(config: Config):
     else:
         raise ValueError(f"Unknown rel_type: {config.rel_type}")
 
-    if config.with_tree:
-        model_type_list = [f"{model}_with_tree" for model in model_type_list]
-
-    if config.prune_type == "nuc":
-        model_type_list = [f"{model}_prune_nuc" for model in model_type_list]
-
     # check existence of lora params
     for model_type in model_type_list:
         if not config.zero_shot:
@@ -265,8 +245,6 @@ def test(config: Config):
             tokenizer,
             parse_type=config.parse_type,
             rel_type=config.rel_type,
-            with_tree=config.with_tree,
-            prune_type=config.prune_type,
             corpus=config.corpus,
         )
         valid_scores = compute_metrics(metric, output)
@@ -291,8 +269,6 @@ def test(config: Config):
         tokenizer,
         parse_type=config.parse_type,
         rel_type=config.rel_type,
-        with_tree=config.with_tree,
-        prune_type=config.prune_type,
         corpus=config.corpus,
     )
     test_scores = compute_metrics(metric, output)

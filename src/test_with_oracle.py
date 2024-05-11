@@ -20,17 +20,6 @@ SUB_TASKS = [
     "nuc",
     "rel",
     "rel-with-nuc",
-    # prune_nuc
-    "span_prune_nuc",
-    "nuc_prune_nuc",
-    "rel_prune_nuc",
-    "rel-with-nuc_prune_nuc",
-    # with_tree
-    "span_with_tree",
-    "nuc_with_tree",
-    "rel_with_tree",
-    "rel-with-nuc_with_tree",
-    # top-down
     "top_down",
 ]
 
@@ -43,18 +32,6 @@ class Config(Tap):
     rel_lora_params_dir: str | None = None
     nuc_rel_lora_params_dir: str | None = None
     rel_with_nuc_lora_params_dir: str | None = None
-
-    span_prune_nuc_lora_params_dir: str | None = None
-    nuc_prune_nuc_lora_params_dir: str | None = None
-    rel_prune_nuc_lora_params_dir: str | None = None
-    nuc_rel_prune_nuc_lora_params_dir: str | None = None
-    rel_with_nuc_prune_nuc_lora_params_dir: str | None = None
-
-    span_with_tree_lora_params_dir: str | None = None
-    nuc_with_tree_lora_params_dir: str | None = None
-    rel_with_tree_lora_params_dir: str | None = None
-    nuc_rel_with_tree_lora_params_dir: str | None = None
-    rel_with_nuc_with_tree_lora_params_dir: str | None = None
 
     top_down_lora_params_dir: str | None = None
 
@@ -371,9 +348,9 @@ def test(
                 best_models[subtask_name]
             ]
 
-        adapter_path_map[subtask_name][
-            f"{subtask_name}_checkpoint-best"
-        ] = os.path.join(save_best_ckpt_path, "adapter_model")
+        adapter_path_map[subtask_name][f"{subtask_name}_checkpoint-best"] = (
+            os.path.join(save_best_ckpt_path, "adapter_model")
+        )
 
         print(
             f"MODEL: {subtask_name}_checkpoint-best, "
