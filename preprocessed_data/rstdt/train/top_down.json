@@ -1,0 +1,3 @@
+{"input":"Input: Westinghouse Electric Corp. said [0] it will buy Shaw-Walker Co. [1] Terms weren't disclosed. [2] Shaw-Walker, [3] based in Muskegon, Mich., [4] makes metal files and desks, and seating and office systems furniture.\nSplit point (0\u20134): ","output":"2"}
+{"input":"Input: Westinghouse Electric Corp. said [0] it will buy Shaw-Walker Co. [1] Terms weren't disclosed.\nSplit point (0\u20131): ","output":"1"}
+{"input":"Input: Shaw-Walker, [0] based in Muskegon, Mich., [1] makes metal files and desks, and seating and office systems furniture.\nSplit point (0\u20131): ","output":"1"}

@@ -1,0 +1,5 @@
+{"input":"Stack2: Westinghouse Electric Corp. said\nStack1: it will buy Shaw-Walker Co.\nQueue1: Terms weren't disclosed.\nAction (shift or reduce): ","output":"reduce"}
+{"input":"Stack2: Westinghouse Electric Corp. said it will buy Shaw-Walker Co.\nStack1: Terms weren't disclosed.\nQueue1: Shaw-Walker,\nAction (shift or reduce): ","output":"reduce"}
+{"input":"Stack2: Westinghouse Electric Corp. said it will buy Shaw-Walker Co. Terms weren't disclosed.\nStack1: Shaw-Walker,\nQueue1: based in Muskegon, Mich.,\nAction (shift or reduce): ","output":"shift"}
+{"input":"Stack2: Shaw-Walker,\nStack1: based in Muskegon, Mich.,\nQueue1: makes metal files and desks, and seating and office systems furniture.\nAction (shift or reduce): ","output":"reduce"}
+{"input":"Stack2: Westinghouse Electric Corp. said it will buy Shaw-Walker Co. Terms weren't disclosed.\nStack1: Shaw-Walker, based in Muskegon, Mich.,\nQueue1: makes metal files and desks, and seating and office systems furniture.\nAction (shift or reduce): ","output":"shift"}

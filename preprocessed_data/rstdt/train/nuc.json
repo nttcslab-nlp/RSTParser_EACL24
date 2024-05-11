@@ -1,0 +1,5 @@
+{"input":"Span1: Westinghouse Electric Corp. said\nSpan2: it will buy Shaw-Walker Co.\nNucleus label (nucleus-nucleus, nucleus-satellite, or satellite-nucleus): ","output":"satellite-nucleus"}
+{"input":"Span1: Westinghouse Electric Corp. said it will buy Shaw-Walker Co.\nSpan2: Terms weren't disclosed.\nNucleus label (nucleus-nucleus, nucleus-satellite, or satellite-nucleus): ","output":"nucleus-satellite"}
+{"input":"Span1: Shaw-Walker,\nSpan2: based in Muskegon, Mich.,\nNucleus label (nucleus-nucleus, nucleus-satellite, or satellite-nucleus): ","output":"nucleus-satellite"}
+{"input":"Span1: Shaw-Walker, based in Muskegon, Mich.,\nSpan2: makes metal files and desks, and seating and office systems furniture.\nNucleus label (nucleus-nucleus, nucleus-satellite, or satellite-nucleus): ","output":"nucleus-nucleus"}
+{"input":"Span1: Westinghouse Electric Corp. said it will buy Shaw-Walker Co. Terms weren't disclosed.\nSpan2: Shaw-Walker, based in Muskegon, Mich., makes metal files and desks, and seating and office systems furniture.\nNucleus label (nucleus-nucleus, nucleus-satellite, or satellite-nucleus): ","output":"nucleus-satellite"}
